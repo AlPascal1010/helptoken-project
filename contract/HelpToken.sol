@@ -27,4 +27,19 @@ contract HelpToken is ERC20 {
     function updateDescription(string memory newDesc) external onlyOwner {
         description = newDesc;
     }
+
+    function mint(address to, uint256 amount) external onlyOwner {
+        _mint(to, amount);
+    }
+
+    function burn(uint256 amount) external {
+        _burn(msg.sender, amount);
+    }
+
+    function burnFrom(address from, uint256 amount) external {
+        uint256 currentAllowance = allowance(from, msg.sender);
+        require(currentAllowance >= amount, "ERC20: burn amount exceeds allowance");
+        _approve(from, msg.sender, currentAllowance - amount);
+        _burn(from, amount);
+    }
 }

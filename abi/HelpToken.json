@@ -24,23 +24,7 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "initialSupply",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "initialImage",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "initialDescription",
-				"type": "string"
-			}
-		],
+		"inputs": [],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
 	},
@@ -131,28 +115,6 @@
 		"type": "error"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "OwnableInvalidOwner",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "OwnableUnauthorizedAccount",
-		"type": "error"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -176,32 +138,6 @@
 		],
 		"name": "Approval",
 		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "previousOwner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "OwnershipTransferred",
-		"type": "event"
-	},
-	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"inputs": [
@@ -284,12 +220,12 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
+				"internalType": "string",
+				"name": "newDesc",
+				"type": "string"
 			}
 		],
-		"name": "transferOwnership",
+		"name": "updateDescription",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -298,16 +234,11 @@
 		"inputs": [
 			{
 				"internalType": "string",
-				"name": "newImage",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "newDescription",
+				"name": "newURL",
 				"type": "string"
 			}
 		],
-		"name": "updateMetadata",
+		"name": "updateImage",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -370,16 +301,24 @@
 	},
 	{
 		"inputs": [],
-		"name": "getMetadata",
+		"name": "description",
 		"outputs": [
 			{
 				"internalType": "string",
-				"name": "image",
+				"name": "",
 				"type": "string"
-			},
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "imageURL",
+		"outputs": [
 			{
 				"internalType": "string",
-				"name": "description",
+				"name": "",
 				"type": "string"
 			}
 		],
