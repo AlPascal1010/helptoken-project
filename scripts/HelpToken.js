@@ -1,84 +1,56 @@
-// helptoken.js
+// scripts/interactHelpToken.js
 require("dotenv").config();
 const { ethers } = require("ethers");
-const readline = require("readline");
 
-// === Setup ===
-const ABI = [
-  "function updateMetadata(string newImage, string newDescription) external",
-  "function getMetadata() view returns (string image, string description)",
-  "function balanceOf(address) view returns (uint256)",
-  "function transfer(address recipient, uint256 amount) returns (bool)"
+const provider = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`);
+const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+const helpTokenAddress = process.env.HELP_TOKEN_ADDRESS;
+
+const helpTokenAbi = [
+  "function name() view returns (string)",
+  "function symbol() view returns (string)",
+  "function decimals() view returns (uint8)",
+  "function balanceOf(address) view returns (uint)",
+  "function imageURL() view returns (string)",
+  "function description() view returns (string)",
+  "function updateImage(string)",
+  "function updateDescription(string)",
+  "function transfer(address to, uint amount) returns (bool)",
+  "function approve(address spender, uint amount) returns (bool)",
+  "function allowance(address owner, address spender) view returns (uint)"
 ];
 
-const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
-const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
-const contract = new ethers.Contract(process.env.CONTRACT_ADDRESS, ABI, signer);
-
-// === CLI UI ===
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-function prompt(q) {
-  return new Promise((res) => rl.question(q, res));
-}
-
-async function getMetadata() {
-  const [image, desc] = await contract.getMetadata();
-  console.log("\n📦 Metadata:");
-  console.log("🖼️ Image:", image);
-  console.log("📝 Description:", desc);
-}
-
-async function updateMetadata() {
-  const newImage = await prompt("Enter new image URL: ");
-  const newDesc = await prompt("Enter new description: ");
-  const tx = await contract.updateMetadata(newImage, newDesc);
-  console.log("⏳ Updating metadata...");
-  await tx.wait();
-  console.log("✅ Metadata updated.");
-}
-
-async function checkBalance() {
-  const address = await prompt("Enter address to check balance: ");
-  const balance = await contract.balanceOf(address);
-  console.log(`💰 Balance of ${address}: ${ethers.utils.formatEther(balance)} HELP`);
-}
-
-async function transferTokens() {
-  const to = await prompt("Enter recipient address: ");
-  const amount = await prompt("Enter amount to send: ");
-  const tx = await contract.transfer(to, ethers.utils.parseEther(amount));
-  console.log("⏳ Sending tokens...");
-  await tx.wait();
-  console.log(`✅ Sent ${amount} HELP to ${to}`);
-}
-
 async function main() {
-  console.log("=== HelpToken Interaction ===");
-  console.log("1. Get Metadata");
-  console.log("2. Update Metadata");
-  console.log("3. Check Balance");
-  console.log("4. Transfer Tokens");
-  console.log("0. Exit");
+  const helpToken = new ethers.Contract(helpTokenAddress, helpTokenAbi, signer);
+  const myAddress = await signer.getAddress();
 
-  const choice = await prompt("Choose an option: ");
+  const name = await helpToken.name();
+  const symbol = await helpToken.symbol();
+  const decimals = await helpToken.decimals();
+  const balance = await helpToken.balanceOf(myAddress);
+  const image = await helpToken.imageURL();
+  const desc = await helpToken.description();
 
-  switch (choice.trim()) {
-    case "1": await getMetadata(); break;
-    case "2": await updateMetadata(); break;
-    case "3": await checkBalance(); break;
-    case "4": await transferTokens(); break;
-    case "0": rl.close(); return;
-    default: console.log("❌ Invalid choice");
-  }
+  console.log(`Token: ${name} (${symbol})`);
+  console.log(`Balance: ${ethers.formatUnits(balance, decimals)} HELP`);
+  console.log(`Image: ${image}`);
+  console.log(`Description: ${desc}`);
 
-  rl.close();
+  // === Transfer example ===
+  const recipient = "0xRecipientAddressHere";
+  const transferAmount = ethers.parseUnits("10", decimals);
+  // await helpToken.transfer(recipient, transferAmount);
+  // console.log(`Transferred 10 HELP to ${recipient}`);
+
+  // === Approve example ===
+  const spender = "0xSpenderAddressHere";
+  const approveAmount = ethers.parseUnits("50", decimals);
+  // await helpToken.approve(spender, approveAmount);
+  // console.log(`Approved ${spender} to spend 50 HELP`);
+
+  // === Check allowance example ===
+  const allowance = await helpToken.allowance(myAddress, spender);
+  console.log(`Allowance for ${spender}: ${ethers.formatUnits(allowance, decimals)} HELP`);
 }
 
-main().catch((err) => {
-  console.error("❌ Error:", err.message);
-  rl.close();
-});
+main().catch(console.error);

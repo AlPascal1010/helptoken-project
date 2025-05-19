@@ -1,32 +1,30 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract HelpToken is ERC20, Ownable {
-    string private _tokenImage;
-    string private _tokenDescription;
+contract HelpToken is ERC20 {
+    address public owner;
+    string public imageURL;
+    string public description;
 
-    constructor(
-        uint256 initialSupply,
-        string memory initialImage,
-        string memory initialDescription
-    )
-        ERC20("HelpToken", "HELP")
-        Ownable(msg.sender) // ✅ pass the deployer as the initial owner
-    {
-        _mint(msg.sender, initialSupply);
-        _tokenImage = initialImage;
-        _tokenDescription = initialDescription;
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not the owner");
+        _;
     }
 
-    function updateMetadata(string memory newImage, string memory newDescription) external onlyOwner {
-        _tokenImage = newImage;
-        _tokenDescription = newDescription;
+    constructor() ERC20("HelpToken", "HELP") {
+        owner = msg.sender;
+        imageURL = "https://ipfs.io/ipfs/bafybeidoe4o4jgo6ktp65z2rxir7yw73aexprmw63qitno674ybcnh2kqa";
+        description = "HelpToken powers humanitarian aid networks by enabling fast, borderless donations.";
+        _mint(msg.sender, 1_000_000 * 10 ** decimals());
     }
 
-    function getMetadata() external view returns (string memory image, string memory description) {
-        return (_tokenImage, _tokenDescription);
+    function updateImage(string memory newURL) external onlyOwner {
+        imageURL = newURL;
+    }
+
+    function updateDescription(string memory newDesc) external onlyOwner {
+        description = newDesc;
     }
 }
