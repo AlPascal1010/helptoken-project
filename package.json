@@ -1,0 +1,35 @@
+{
+    "name": "help-token-dapp",
+    "version": "1.0.0",
+    "description": "A CLI app to interact with the HelpToken ERC-20 smart contract",
+    "main": "scripts/interactHelpToken.js",
+    "type": "module",
+    "scripts": {
+        "start": "node scripts/interactHelpToken.js"
+    },
+    "keywords": [
+        "ERC20",
+        "CLI",
+        "Ethereum",
+        "Ethers",
+        "HelpToken"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "dependencies": {
+        "dotenv": "^16.5.0",
+        "ethers": "^6.14.1",
+        "inquirer": "^9.3.7"
+    },
+    "directories": {
+        "test": "test"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/AlPascal1010/helptoken-project.git"
+    },
+    "bugs": {
+        "url": "https://github.com/AlPascal1010/helptoken-project/issues"
+    },
+    "homepage": "https://github.com/AlPascal1010/helptoken-project#readme"
+}

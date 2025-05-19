@@ -1,8 +1,20 @@
-require("dotenv").config();
-const inquirer = require("inquirer");
-const { ethers } = require("ethers");
+// #!/usr/bin/env node
+import dotenv from "dotenv";
+import inquirer from "inquirer";
+import { ethers } from "ethers";
 
-const provider = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`);
+dotenv.config();
+
+// ✅ Validate required environment variables
+const requiredEnv = ["HELP_TOKEN_ADDRESS", "PRIVATE_KEY", "ALCHEMY_API_KEY"];
+for (const key of requiredEnv) {
+  if (!process.env[key]) {
+    console.error(`❌ Missing environment variable: ${key}`);
+    process.exit(1);
+  }
+}
+
+const provider = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`, { timeout: 60000 });
 const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 const helpTokenAddress = process.env.HELP_TOKEN_ADDRESS;
 
@@ -33,7 +45,7 @@ async function main() {
     {
       type: "list",
       name: "action",
-      message: "Select an action:",
+      message: "📘 Select an action:",
       choices: [
         "View Info",
         "Transfer",
@@ -156,7 +168,7 @@ async function main() {
   }
 
   console.log("\n");
-  main(); // loop again
+  main(); // repeat
 }
 
 main().catch(console.error);
